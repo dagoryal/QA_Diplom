@@ -11,10 +11,15 @@ api = KinoAPI(config.base_url_api, config.main_token)
 @allure.id("Test-1")
 def test_name_search():
     kino = api.name_search(query=config.query_valid)
-    kino_total = kino["docs"]['names' == config.query_valid]
-    print(len(kino_total))
+    kino_total = kino['total']
+    data = kino['docs']
+    names = [item['alternativeName'] for item in data]
+    match = names[0]
+    print(kino_total)
     with allure.step("Проверить, что длина списка найденных фильмов >0"):
-        assert len(kino_total) > 0
+        assert kino_total > 0
+    with allure.step("Проверить, что название фильма соответствует поисковому запросу"):
+        assert match == config.query_valid
 
 @allure.epic("API Tests")
 @allure.feature("Поиск произведений")
@@ -70,9 +75,9 @@ def test_non_existent_name_search():
 @allure.title("Поиск по невалидному id")
 @allure.id("Test-6")
 def test_invalid_id_search():
-    film = api.id_search(film_id=config.id_invalid)['message']
+    film = api.id_search(film_id=config.id_invalid)['message'][0]
     with allure.step("Проверить, что по невалидному id невозможно отправить запрос"):
-        assert film == ['Значение поля id должно быть в диапазоне от 250 до 10000000!']
+        assert film == 'Значение поля id должно быть в диапазоне от 250 до 10000000!'
 
 @allure.epic("API Tests")
 @allure.feature("Поиск произведений")
@@ -109,9 +114,9 @@ def test_no_token():
 @allure.id("Test-9")
 def test_zero_limit():
     kino = api.zero_limit(query=config.query_valid, limit=0)
-    message = kino['message']
+    message = kino['message'][0]
     status = kino['statusCode']
     with allure.step("Проверить, что количество элементов на странице min 1"):
-        assert message == ['limit must not be less than 1']
+        assert message == 'limit must not be less than 1'
     with allure.step("Проверить статус код"):
         assert status == 400

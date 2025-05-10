@@ -1,5 +1,4 @@
 import allure
-from sqlalchemy.util.queue import Empty
 import config
 from pages.PageUI import KinoUI
 
@@ -32,7 +31,7 @@ def test_random_movie_search(browser):
     random_movie = page.random_movie(config.film_empty_name)
     print(random_movie)
     with allure.step("Убедиться, что в результате что-то нашлось"):
-        assert list(random_movie) is not Empty
+        assert len(random_movie) > 0, 'Результат поиска пустой'
 
 @allure.epic("UI Tests")
 @allure.feature("Расширенный поиск")
@@ -56,7 +55,7 @@ def test_advanced_search_select_genre(browser):
     search_movie.open()
     search_movie.captcha()
     search_movie.advanced_search_open()
-    genre = search_movie.advanced_search_select_genre(10)
+    genre = search_movie.advanced_search_select_genre()
     with allure.step("Проверить, что жанр выбран корректно"):
         assert genre == config.genre
 
@@ -70,10 +69,10 @@ def test_advanced_search(browser):
     search_movie.captcha()
     search_movie.advanced_search_open()
     search_movie.advanced_search_select_country(config.country)
-    search_movie.advanced_search_select_genre(10)
+    search_movie.advanced_search_select_genre()
     res = search_movie.advanced_search()
     with allure.step("Проверить, что список фильмов не пустой"):
-        assert res is not Empty
+        assert res > 0, 'По указанным параметрам ничего не найдено!'
 
 @allure.epic("UI Tests")
 @allure.feature("Коллекции")

@@ -65,14 +65,14 @@ class KinoUI:
         return selected_country.text
 
     @allure.step("В разделе `Жанры` выбрать жанр кино")
-    def advanced_search_select_genre(self, genre: int):
+    def advanced_search_select_genre(self):
         self.driver.find_element(By.ID, 'm_act[genre]')
         wait = WebDriverWait(self.driver, 4)
-        selected_genre = wait.until(EC.element_to_be_clickable((By.XPATH, f'//*[@id="m_act[genre]"]/option[{genre}]')))
+        selected_genre = wait.until(EC.element_to_be_clickable((By.XPATH, f'//*[@id="m_act[genre]"]/option[10]')))
         selected_genre.click()
         checkbox = wait.until(EC.element_to_be_clickable((By.XPATH, '//*[@id="m_act[genre_and]"]')))
         checkbox.click()
-        return selected_genre.text
+        return selected_genre.accessible_name
 
     @allure.step("Нажать на кнопку поиска и посмотреть результаты")
     def advanced_search(self):
